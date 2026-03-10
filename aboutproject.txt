@@ -1,0 +1,3 @@
+- collect, clean and analyze customer data using pandas, matplotlib and seaborn.
+- build a etl pipeline to extract, transform and load the csv dataset to a postgresql dataset.
+- develop a ml model "clustering" to do the customer segementation based of their data.
