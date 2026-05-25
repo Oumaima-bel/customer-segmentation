@@ -10,7 +10,7 @@ Application de **Machine Learning appliquée au Marketing Digital** développée
 
 ---
 
-# 🚀 Objectif du projet
+#  Objectif du projet
 
 Ce projet a pour objectif de montrer comment le **Machine Learning** peut être utilisé dans le domaine du **marketing digital** afin d’aider les entreprises à :
 
@@ -24,9 +24,9 @@ L’application propose une **vue business interactive** accessible aux profils 
 
 ---
 
-# 🧠 Fonctionnalités principales
+#  Fonctionnalités principales
 
-## ✅ Segmentation clients
+##  Segmentation clients
 
 Utilisation de l’algorithme :
 
@@ -42,7 +42,7 @@ pour regrouper automatiquement les clients selon leurs comportements :
 
 ---
 
-## ✅ Prédiction de réponse marketing
+##  Prédiction de réponse marketing
 
 Utilisation d’un modèle supervisé pour prédire :
 
@@ -56,7 +56,7 @@ Le dashboard permet :
 
 ---
 
-## ✅ Dashboard Business Interactif
+##  Dashboard Business Interactif
 
 L’application contient plusieurs vues :
 
@@ -95,7 +95,7 @@ L’application contient plusieurs vues :
 
 ---
 
-# 🛠️ Technologies utilisées
+#  Technologies utilisées
 
 ## Frontend / Dashboard
 - Streamlit
@@ -115,7 +115,7 @@ L’application contient plusieurs vues :
 
 ---
 
-# 📂 Structure du projet
+#  Structure du projet
 
 ```bash
 CUSTOMER-SEGMENTATION/
@@ -148,7 +148,7 @@ CUSTOMER-SEGMENTATION/
 
 ---
 
-# 📥 Dataset utilisé
+#  Dataset utilisé
 
 Le projet utilise le dataset :
 
@@ -169,7 +169,7 @@ Variables principales :
 
 ---
 
-# ⚙️ Installation
+#  Installation
 
 ## 1️⃣ Cloner le projet
 
@@ -219,7 +219,7 @@ http://localhost:8501
 
 ---
 
-# 📋 Colonnes attendues dans le fichier CSV
+#  Colonnes attendues dans le fichier CSV
 
 Le fichier importé doit contenir les colonnes suivantes :
 
@@ -249,7 +249,7 @@ AcceptedCmp5
 
 ---
 
-# 📊 Pipeline Machine Learning
+#  Pipeline Machine Learning
 
 ## 🔹 Feature Engineering
 
@@ -287,7 +287,7 @@ Feature Engineering
 
 ---
 
-# 💡 Exemples d’insights générés
+#  Exemples d’insights générés
 
 - Clients VIP à forte valeur
 - Clients à risque de départ
@@ -297,51 +297,14 @@ Feature Engineering
 
 ---
 
-# 📤 Exports disponibles
+#  Exports disponibles
 
 L’application permet d’exporter :
 
-✅ base clients enrichie  
-✅ profils segments  
-✅ clients prioritaires  
-✅ rapport marketing texte
-
----
-
-# 🎯 Cas d’utilisation Business
-
-Cette application peut être utilisée pour :
-
-- CRM intelligent
-- ciblage marketing
-- fidélisation clients
-- recommandations campagnes
-- analyse comportementale
-- aide à la décision
-
----
-
-# 📈 Perspectives d’amélioration
-
-Améliorations possibles :
-
-- déploiement cloud
-- recommandations produits
-- analyse temps réel
-- intégration Power BI
-- deep learning
-- NLP marketing
-- emailing automatique
-
----
-
-# 👩‍💻 Auteur
-
-Projet réalisé dans le cadre d’un projet de :
-
-## Machine Learning appliqué au Marketing Digital
-
-École Mohammadia d’Ingénieurs (EMI)
+- base clients enrichie  
+- profils segments  
+- clients prioritaires  
+- rapport marketing texte
 
 ---
 
