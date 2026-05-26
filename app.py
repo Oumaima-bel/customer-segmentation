@@ -614,7 +614,7 @@ with st.sidebar:
         threshold = st.slider("Seuil de ciblage (%)", 20, 80, 50, 5) / 100
 
         st.markdown("**Nombre de Segments**")
-        n_cluster = st.slider("Nombre de segments", 3, 6, 3, 1)
+        n_cluster = st.slider("Nombre de segments", 2, 6, 3, 1)
     else:
         page = "🏠  Vue d'ensemble"
         threshold = 0.5
