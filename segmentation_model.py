@@ -15,17 +15,6 @@ from utils import load_df
 
 df = load_df()
 
-
-kmeans_final = KMeans(
-    n_clusters=3,
-    random_state=42,
-    n_init=10,
-    max_iter=1000
-)
-
-
-
-
 seg_pipeline = Pipeline([
     ("feature_engineering", FeatureEngineer()),
     ("scaler", StandardScaler()),
@@ -35,9 +24,18 @@ seg_pipeline = Pipeline([
 seg_pipeline.fit(df)
 X = seg_pipeline.transform(df)
 
-
-kmeans_final.fit_predict(X)
-
-
 joblib.dump(seg_pipeline,"models/seg_pipeline.pkl")
-joblib.dump(kmeans_final,"models/kmeans_model.pkl")
+
+
+
+def kmeans(N_CLUSTERS):
+    kmeans_final = KMeans(
+        n_clusters=N_CLUSTERS,
+        random_state=42,
+        n_init=10,
+        max_iter=1000
+    )
+
+    kmeans_final.fit_predict(X)
+
+    joblib.dump(kmeans_final,"models/kmeans_model.pkl")

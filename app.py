@@ -16,6 +16,9 @@ warnings.filterwarnings("ignore")
 
 from sklearn.pipeline import Pipeline
 from preprocessing import FeatureEngineer
+from segmentation_model import kmeans
+
+
 
 # ─────────────────────────────────────────────────────────────
 # PALETTE
@@ -39,27 +42,72 @@ TEXT        = "#2E2E2E"
 SUBTEXT     = "#7A7A7A"
 LIGHT_TEXT  = "#A8A0A0"
 
+
+# ─────────────────────────────────────────────────────────────
+# DARK / LIGHT MODE
+# ─────────────────────────────────────────────────────────────
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+def toggle_theme():
+    st.session_state.dark_mode = not st.session_state.dark_mode
+
+if st.session_state.dark_mode:
+    BG         = "#1A1A2E"
+    CARD       = "#16213E"
+    BORDER     = "#2E2E50"
+    TEXT       = "#F0EAF8"
+    SUBTEXT    = "#B8A8D0"
+    LIGHT_TEXT = "#7A6A90"
+
+    # Insight box backgrounds — sombres et lisibles
+    ROSE_DEEP   = "#E8809A"
+    PEACH_DEEP  = "#E8945A"
+    YELLOW_DEEP = "#D8B840"
+    GREEN_DEEP  = "#5ABE7A"
+    MINT_DEEP   = "#4AAEA6"
+    LAV_DEEP    = "#8068C8"
+    ROSE        = "#3A2030"
+    PEACH       = "#3A2818"
+    YELLOW      = "#3A3010"
+    GREEN       = "#1A3020"
+    MINT        = "#182830"
+    LAVENDER    = "#28204A"
+    INSIGHT_GREEN  = "#1A2E20"
+    INSIGHT_YELLOW = "#2E2A10"
+    INSIGHT_ROSE   = "#2E1520"
+    INSIGHT_BLUE   = "#101828"
+    INSIGHT_PURPLE = "#1E1530"
+else:
+    INSIGHT_GREEN  = "#F0FAF2"
+    INSIGHT_YELLOW = "#FFF8EC"
+    INSIGHT_ROSE   = "#FFF0F5"
+    INSIGHT_BLUE   = "#F0F8FF"
+    INSIGHT_PURPLE = "#F5F0FF"
+
+
+
 PLOTLY_COLORS = [
     ROSE_DEEP, PEACH_DEEP, GREEN_DEEP, MINT_DEEP,
     YELLOW_DEEP, LAV_DEEP, "#C85050", "#5090C8"
 ]
 
 SEGMENT_META = {
-    0: {"name": "Clients VIP",         "icon": "👑", "color": ROSE_DEEP,   "bg": "#FFF0F5",
+    0: {"name": "Clients VIP",         "icon": "👑", "color": ROSE_DEEP,   "bg": INSIGHT_ROSE ,
         "desc": "Clients premium a fort revenu et depenses elevees. Priorite absolue pour les offres exclusives."},
-    1: {"name": "Gros depensiers",      "icon": "💰", "color": PEACH_DEEP,  "bg": "#FFF4EC",
+    1: {"name": "Gros depensiers",      "icon": "💰", "color": PEACH_DEEP,  "bg": PEACH,
         "desc": "Fort volume d'achats. Sensibles aux promotions et offres en volume."},
-    2: {"name": "Clients fideles",      "icon": "🤝", "color": GREEN_DEEP,  "bg": "#F0FAF2",
+    2: {"name": "Clients fideles",      "icon": "🤝", "color": GREEN_DEEP,  "bg": INSIGHT_GREEN,
         "desc": "Historique d'achat stable. Apprecient la reconnaissance et les programmes de fidelite."},
-    3: {"name": "Clients occasionnels", "icon": "🛍️", "color": MINT_DEEP,   "bg": "#F0FAFA",
+    3: {"name": "Clients occasionnels", "icon": "🛍️", "color": MINT_DEEP,   "bg": MINT,
         "desc": "Achats sporadiques. Un programme de relance peut augmenter leur frequence."},
-    4: {"name": "Clients inactifs",     "icon": "💤", "color": "#A0A0A0",   "bg": "#F5F5F5",
+    4: {"name": "Clients inactifs",     "icon": "💤", "color": "#A0A0A0",   "bg": INSIGHT_YELLOW,
         "desc": "N'ont pas achete depuis longtemps. Campagne de re-engagement recommandee."},
-    5: {"name": "Nouveaux clients",     "icon": "✨", "color": YELLOW_DEEP, "bg": "#FDFAEC",
+    5: {"name": "Nouveaux clients",     "icon": "✨", "color": YELLOW_DEEP, "bg": INSIGHT_YELLOW,
         "desc": "Recemment integres. Accompagnement et fidelisation rapide indispensables."},
     6: {"name": "Clients a risque",     "icon": "⚠️", "color": "#C85050",   "bg": "#FFF0F0",
         "desc": "Signes de desengagement. Attention particuliere et offres personnalisees necessaires."},
-    7: {"name": "Clients digitaux",     "icon": "💻", "color": LAV_DEEP,    "bg": "#F5F0FF",
+    7: {"name": "Clients digitaux",     "icon": "💻", "color": LAV_DEEP,    "bg": INSIGHT_BLUE,
         "desc": "Tres actifs sur les canaux en ligne. Privilegier les campagnes email et web."},
 }
 
@@ -76,6 +124,8 @@ st.set_page_config(
 # ─────────────────────────────────────────────────────────────
 # CSS
 # ─────────────────────────────────────────────────────────────
+
+
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;500;700&display=swap');
@@ -172,6 +222,16 @@ section[data-testid="stSidebar"] .block-container {{ padding-top: 1.5rem; }}
 }}
 .insight-icon {{ font-size:1.1rem; flex-shrink:0; margin-top:0.15rem; }}
 
+/* ── Insight boxes — adaptation dark mode ── */
+.insight-box {{
+    background: {CARD} !important;
+    border-left-color: inherit;
+}}
+.insight-box span {{
+    color: {TEXT} !important;
+}}
+
+
 /* Segment card */
 .seg-card {{
     border-radius:13px; padding:1.1rem 1.3rem; margin-bottom:0.7rem;
@@ -218,7 +278,7 @@ section[data-testid="stSidebar"] .block-container {{ padding-top: 1.5rem; }}
 
 /* Upload zone */
 .upload-zone {{
-    background:linear-gradient(135deg, #FFF8F2, #FFF0F8);
+    background:linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.25));
     border:2px dashed {PEACH}; border-radius:18px;
     padding:3rem 2rem; text-align:center;
 }}
@@ -232,6 +292,136 @@ section[data-testid="stSidebar"] .block-container {{ padding-top: 1.5rem; }}
 }}
 
 hr.soft {{ border:none; border-top:1px solid {BORDER}; margin:1.4rem 0; }}
+
+/* Scrollbar */
+::-webkit-scrollbar {{ width: 6px; }}
+::-webkit-scrollbar-track {{ background: {BG}; }}
+::-webkit-scrollbar-thumb {{ background: {BORDER}; border-radius: 3px; }}
+
+
+/* ── Sidebar dark/light adaptatif ── */
+section[data-testid="stSidebar"] {{
+    background: {BG} !important;
+    border-right: 1px solid {BORDER} !important;
+}}
+section[data-testid="stSidebar"] * {{
+    color: {TEXT} !important;
+}}
+section[data-testid="stSidebar"] .stRadio label {{
+    color: {TEXT} !important;
+}}
+section[data-testid="stSidebar"] .stSlider label,
+section[data-testid="stSidebar"] .stSlider span {{
+    color: {SUBTEXT} !important;
+}}
+section[data-testid="stSidebar"] .stFileUploader label {{
+    color: {TEXT} !important;
+}}
+
+/* ── Fond page principal ── */
+.stApp, .stApp > div {{
+    background-color: {BG} !important;
+}}
+[data-testid="stHeader"] {{
+    background-color: {BG} !important;
+}}
+[data-testid="stToolbar"] {{
+    background-color: {BG} !important;
+}}
+
+/* ── Texte général compatible fond sombre ── */
+html, body, [class*="css"], p, span, div, label {{
+    color: {TEXT};
+}}
+
+/* ── Inputs et widgets ── */
+.stTextInput input,
+.stNumberInput input,
+.stSelectbox select,
+.stTextArea textarea {{
+    background-color: {CARD} !important;
+    color: {TEXT} !important;
+    border-color: {BORDER} !important;
+}}
+
+/* ── Dataframe ── */
+[data-testid="stDataFrame"] {{
+    background-color: {CARD} !important;
+    color: {TEXT} !important;
+}}
+.dataframe thead th {{
+    background-color: {CARD} !important;
+    color: {SUBTEXT} !important;
+}}
+.dataframe tbody tr {{
+    background-color: {CARD} !important;
+    color: {TEXT} !important;
+}}
+
+/* ── Boutons ── */
+.stButton button {{
+    background-color: {CARD} !important;
+    color: {TEXT} !important;
+    border: 1px solid {BORDER} !important;
+}}
+.stButton button:hover {{
+    border-color: {PEACH_DEEP} !important;
+}}
+
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab"] {{
+    background: {CARD} !important;
+    color: {SUBTEXT} !important;
+}}
+.stTabs [aria-selected="true"] {{
+    background: {BG} !important;
+    color: {TEXT} !important;
+    border-bottom: 3px solid {PEACH_DEEP} !important;
+}}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {{ width: 6px; }}
+::-webkit-scrollbar-track {{ background: {BG}; }}
+::-webkit-scrollbar-thumb {{ background: {BORDER}; border-radius: 3px; }}
+
+
+/* Mode sombre — fond page forcé */
+.stApp {{ background-color: {BG} !important; }}
+[data-testid="stHeader"] {{ background-color: {BG} !important; }}
+/* Zone principale upload */
+[data-testid="stFileUploader"] {{
+    background-color: #B56576;
+    border: 2px dashed #B56576;
+    border-radius: 18px;
+    padding: 1rem;
+    }}
+
+/* Texte */
+[data-testid="stFileUploader"] label {{
+    color: #7A4E2D;
+    font-weight: 600;}}
+
+/* Bouton Browse files */
+[data-testid="stFileUploader"] button {{
+    background-color: #B56576;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 0.4rem 1rem;
+    font-weight: 600;
+}}
+
+/* Hover bouton */
+[data-testid="stFileUploader"] button:hover {{
+    background-color: #B56576;
+    color: white;
+}}
+
+/* Texte drag & drop */
+[data-testid="stFileUploader"] small {{
+    color: #B56576A;
+}}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -298,11 +488,10 @@ def plotly_layout(fig, title="", height=380):
 @st.cache_resource
 def load_models():
     response_model = joblib.load("models/response_model.pkl")
-    kmeans_model   = joblib.load("models/kmeans_model.pkl")
     seg_pipeline   = joblib.load("models/seg_pipeline.pkl")
-    return response_model, kmeans_model, seg_pipeline
+    return response_model, seg_pipeline
 
-response_model, kmeans_model, seg_pipeline = load_models()
+response_model, seg_pipeline = load_models()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -318,6 +507,18 @@ with st.sidebar:
         <div style='font-size:0.73rem;color:{LIGHT_TEXT};margin-top:0.2rem;'>Vue Business — v2.0</div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Toggle dark/light — AJOUTER ICI
+    mode_icon  = "🌙" if not st.session_state.dark_mode else "☀️"
+    mode_label = "Mode sombre" if not st.session_state.dark_mode else "Mode clair"
+    st.button(
+        f"{mode_icon}  {mode_label}",
+        on_click=toggle_theme,
+        use_container_width=True,
+        help="Basculer entre le mode clair et sombre"
+    )
+    st.markdown(f"<hr style='border:none;border-top:1px solid {BORDER};margin:0.8rem 0'>",
+                unsafe_allow_html=True)
 
     uploaded_file = st.file_uploader(
         "📂 Importer les donnees clients",
@@ -411,6 +612,9 @@ with st.sidebar:
                     unsafe_allow_html=True)
         st.markdown("**⚙️ Reglages**")
         threshold = st.slider("Seuil de ciblage (%)", 20, 80, 50, 5) / 100
+
+        st.markdown("**Nombre de Segments**")
+        n_cluster = st.slider("Nombre de segments", 3, 6, 3, 1)
     else:
         page = "🏠  Vue d'ensemble"
         threshold = 0.5
@@ -422,7 +626,6 @@ with st.sidebar:
 st.markdown("""
 <div class="hero">
     <h1>📊 Marketing Intelligence</h1>
-    <p>Analysez vos clients, anticipez leurs comportements et optimisez vos campagnes marketing.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -526,6 +729,10 @@ with st.spinner("Analyse en cours..."):
 
     # Segmentation
     X_seg = seg_pipeline.transform(df_raw)
+
+    kmeans(n_cluster)
+
+    kmeans_model = joblib.load("models/kmeans_model.pkl")
     segments = kmeans_model.predict(X_seg)
 
     # Response prediction
@@ -540,7 +747,134 @@ with st.spinner("Analyse en cours..."):
     df_proc["Probabilite_Reponse"] = response_proba
     df_proc["Prediction_Reponse"]  = response_pred
     df_proc["Segment"]             = segments
-    df_proc["Segment_Nom"]         = [get_seg_meta(s)["name"] for s in segments]
+
+    # =========================================================
+    # PROFIL DES SEGMENTS
+    # =========================================================
+
+    segment_profile = (
+        df_proc
+        .groupby("Segment")[[
+            "TotalSpend",
+            "Income",
+            "TotalPurchases",
+            "Probabilite_Reponse",
+            "NumWebPurchases",
+            "Recency",
+            "TotalCampaignsAccepted"
+        ]]
+        .mean()
+    )
+
+    # =========================================================
+    # NORMALISATION
+    # =========================================================
+
+    norm = (
+        segment_profile - segment_profile.min()
+    ) / (
+        segment_profile.max() - segment_profile.min()
+    )
+
+    # =========================================================
+    # CALCUL DES SCORES METIERS
+    # =========================================================
+
+    segment_scores = {}
+
+    for seg in norm.index:
+
+        row = norm.loc[seg]
+
+        spend      = row["TotalSpend"]
+        income     = row["Income"]
+        purchases  = row["TotalPurchases"]
+        response   = row["Probabilite_Reponse"]
+        web        = row["NumWebPurchases"]
+        recency    = 1 - row["Recency"]  # faible recency = meilleur
+        campaigns  = row["TotalCampaignsAccepted"]
+
+        scores = {
+
+            # VIP = riches + grosses dépenses + forte réponse
+            "Clients VIP":
+                (0.35 * spend) +
+                (0.30 * income) +
+                (0.20 * response) +
+                (0.15 * campaigns),
+
+            # Fidèles = beaucoup d’achats réguliers
+            "Clients fideles":
+                (0.45 * purchases) +
+                (0.30 * campaigns) +
+                (0.25 * response),
+
+            # Digitaux = achats web élevés
+            "Clients digitaux":
+                (0.70 * web) +
+                (0.20 * purchases) +
+                (0.10 * response),
+
+            # Gros dépensiers = dépenses très élevées
+            "Gros depensiers":
+                (0.60 * spend) +
+                (0.25 * income) +
+                (0.15 * purchases),
+
+            # Occasionnels = peu d’achats
+            "Clients occasionnels":
+                (1 - purchases) * 0.6 +
+                (1 - spend) * 0.4,
+
+            # Nouveaux clients
+            "Nouveaux clients":
+                (0.70 * recency) +
+                ((1 - purchases) * 0.30),
+
+            # Inactifs
+            "Clients inactifs":
+                ((1 - response) * 0.4) +
+                ((1 - purchases) * 0.3) +
+                ((1 - spend) * 0.3)
+        }
+
+        segment_scores[seg] = scores
+
+    # =========================================================
+    # ATTRIBUTION UNIQUE DES NOMS
+    # =========================================================
+
+    segment_names = {}
+
+    used_names = set()
+
+    for seg, scores in segment_scores.items():
+
+        sorted_scores = sorted(
+            scores.items(),
+            key=lambda x: x[1],
+            reverse=True
+        )
+
+        for name, score in sorted_scores:
+
+            if name not in used_names:
+                segment_names[seg] = name
+                used_names.add(name)
+                break
+
+    # =========================================================
+    # AJOUT AU DATAFRAME
+    # =========================================================
+
+    df_proc["Segment_Nom"] = (
+        df_proc["Segment"]
+        .map(segment_names)
+    )
+    print("--------------------------------------------------------------------------------")
+    print(segment_names)
+    print(df_proc["Segment"].value_counts())
+    print(df_proc["Segment_Nom"].value_counts())
 
 n_total   = len(df_proc)
 n_high    = (df_proc["Probabilite_Reponse"] >= threshold).sum()
@@ -698,10 +1032,10 @@ elif "Qualite" in page:
 # ══════════════════════════════════════════════════════════════
 elif "Segments" in page:
     section_title("👥", "Vos segments clients")
-    insight("💡",
-            "Votre base a ete divisee automatiquement en groupes homogenes. "
-            "Chaque segment partage des comportements d'achat similaires.",
-            "#FFF8EC", YELLOW_DEEP)
+    # insight("💡",
+    #         "Votre base a ete divisee automatiquement en groupes homogenes. "
+    #         "Chaque segment partage des comportements d'achat similaires.",
+    #         "#FFF8EC", YELLOW_DEEP)
 
     seg_counts = df_proc["Segment_Nom"].value_counts()
     cols = st.columns(2)
@@ -713,16 +1047,17 @@ elif "Segments" in page:
         proba_avg = df_proc[df_proc["Segment_Nom"] == seg_name]["Probabilite_Reponse"].mean() * 100
         color, bg, icon, desc = meta["color"], meta["bg"], meta["icon"], meta["desc"]
 
+
         with col:
             reco_pills = {
-                "Clients VIP":         [("👑","Offre premium",LAV_DEEP),("🎁","Fidelisation VIP",ROSE_DEEP)],
                 "Gros depensiers":     [("💰","Bundle produits",PEACH_DEEP),("🏷️","Reduction volume",YELLOW_DEEP)],
+                "Clients VIP":         [("👑","Offre premium",LAV_DEEP),("🎁","Fidelisation VIP",ROSE_DEEP)],
                 "Clients fideles":     [("🤝","Carte fidelite",GREEN_DEEP),("🎉","Recompense anniversaire",MINT_DEEP)],
                 "Clients occasionnels":[("📧","Email personnalise",MINT_DEEP),("⏰","Offre limitee",YELLOW_DEEP)],
-                "Clients inactifs":    [("💌","Re-engagement",ROSE_DEEP),("🎯","Offre retour",PEACH_DEEP)],
-                "Nouveaux clients":    [("✨","Email bienvenue",LAV_DEEP),("📘","Guide produits",GREEN_DEEP)],
-                "Clients a risque":    [("⚠️","Alerte equipe",  "#C85050"),("📞","Suivi personnalise",PEACH_DEEP)],
                 "Clients digitaux":    [("💻","Campagne digitale",LAV_DEEP),("📱","Push notification",MINT_DEEP)],
+                "Nouveaux clients":    [("✨","Email bienvenue",LAV_DEEP),("📘","Guide produits",GREEN_DEEP)],
+                "Clients inactifs":    [("💌","Re-engagement",ROSE_DEEP),("🎯","Offre retour",PEACH_DEEP)],
+                "Clients a risque":    [("⚠️","Alerte equipe",  "#C85050"),("📞","Suivi personnalise",PEACH_DEEP)],
             }
             pills_html = "".join([
                 f'<span class="pill" style="background:{bg};color:{c};">{ic} {tx}</span>'
@@ -762,7 +1097,7 @@ elif "Segments" in page:
         "Recency": "Recence (jours)",
         "NumWebPurchases": "Achats en ligne"
     }.items() if c in df_proc.columns}
-
+# get_seg_meta
     if compare_vars:
         profile = df_proc.groupby("Segment_Nom")[list(compare_vars.keys())].mean().round(1)
         profile.columns = list(compare_vars.values())
