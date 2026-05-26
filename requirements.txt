@@ -5,3 +5,4 @@ plotly==6.7.0
 scikit_learn==1.8.0
 streamlit==1.57.0
 xgboost==3.2.0
+matplotlib==3.10.8
