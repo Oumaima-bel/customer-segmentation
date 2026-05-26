@@ -390,8 +390,8 @@ html, body, [class*="css"], p, span, div, label {{
 [data-testid="stHeader"] {{ background-color: {BG} !important; }}
 /* Zone principale upload */
 [data-testid="stFileUploader"] {{
-    background-color: #B56576;
-    border: 2px dashed #B56576;
+    background-color: rgb(181, 50, 100,0.25);
+    border: 2px dashed rgb(181, 50, 100,0.25);
     border-radius: 18px;
     padding: 1rem;
     }}
@@ -403,7 +403,7 @@ html, body, [class*="css"], p, span, div, label {{
 
 /* Bouton Browse files */
 [data-testid="stFileUploader"] button {{
-    background-color: #B56576;
+    background-color: rgb(181,50, 100,0.75);
     color: white;
     border-radius: 10px;
     border: none;
@@ -413,13 +413,13 @@ html, body, [class*="css"], p, span, div, label {{
 
 /* Hover bouton */
 [data-testid="stFileUploader"] button:hover {{
-    background-color: #B56576;
+    background-color: rgb(181, 50, 100,0.25);
     color: white;
 }}
 
 /* Texte drag & drop */
 [data-testid="stFileUploader"] small {{
-    color: #B56576A;
+    color:  rgb(181, 50, 100,0.25);
 }}
 
 </style>
